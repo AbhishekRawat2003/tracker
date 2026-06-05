@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>GATE Tracker — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: linear-gradient(135deg, #0e0f14 0%, #1a1b28 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #e8eaf6;
+}
+.auth-container { width: 100%; max-width: 420px; padding: 2rem; }
+.auth-card {
+  background: #14151c;
+  border: 1px solid #2a2c3e;
+  border-radius: 16px;
+  padding: 2.5rem;
+}
+.auth-logo {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 2rem; justify-content: center;
+}
+.auth-logo-icon {
+  width: 40px; height: 40px; background: #6c63ff; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Mono', monospace; font-size: 20px;
+  font-weight: 700; color: #fff;
+}
+.auth-logo-text { font-family: 'Space Mono', monospace; font-size: 18px; font-weight: 700; }
+.auth-logo-text em { color: #6c63ff; font-style: normal; }
+.auth-title { font-size: 22px; font-weight: 600; margin-bottom: 0.4rem; color: #e8eaf6; }
+.auth-sub { font-size: 14px; color: #5a5d7a; margin-bottom: 1.8rem; }
+
+/* Form */
+.auth-form { display: flex; flex-direction: column; gap: 14px; margin-bottom: 1.2rem; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: 13px; font-weight: 500; color: #9093b0; }
+.form-input {
+  background: #1c1e29; border: 1px solid #2a2c3e; border-radius: 8px;
+  color: #e8eaf6; padding: 10px 12px; font-size: 14px;
+  font-family: 'DM Sans', sans-serif; outline: none; transition: border-color 0.15s;
+}
+.form-input:focus { border-color: #6c63ff; box-shadow: 0 0 0 3px rgba(108,99,255,0.1); }
+.form-input::placeholder { color: #5a5d7a; }
+
+/* Buttons */
+.btn-auth {
+  background: #6c63ff; color: #fff; border: none; border-radius: 8px;
+  padding: 10px 16px; font-size: 14px; font-family: 'DM Sans', sans-serif;
+  font-weight: 500; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+  margin-top: 4px; width: 100%;
+}
+.btn-auth:hover { opacity: 0.88; }
+.btn-auth:active { transform: scale(0.98); }
+.btn-auth:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Google button */
+.btn-google {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; background: #fff; color: #3c4043; border: 1px solid #dadce0;
+  border-radius: 8px; padding: 10px 16px; font-size: 14px;
+  font-family: 'DM Sans', sans-serif; font-weight: 500;
+  cursor: pointer; transition: background 0.15s, transform 0.1s;
+}
+.btn-google:hover { background: #f8f9fa; }
+.btn-google:active { transform: scale(0.98); }
+.btn-google:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-google svg { flex-shrink: 0; }
+
+/* Divider */
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 1.2rem 0; color: #5a5d7a; font-size: 13px;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: #2a2c3e;
+}
+
+/* Toggle link */
+.auth-toggle { text-align: center; font-size: 13px; margin-top: 1.2rem; }
+.auth-toggle button {
+  background: none; border: none; color: #6c63ff; cursor: pointer;
+  text-decoration: underline; font-family: 'DM Sans', sans-serif; padding: 0;
+}
+
+/* Error / loading */
+.auth-error {
+  background: rgba(248,113,113,0.1); border: 1px solid #f87171;
+  color: #fca5a5; padding: 10px 12px; border-radius: 8px;
+  font-size: 13px; margin-bottom: 1rem; display: none;
+}
+.auth-error.show { display: block; }
+.auth-loading {
+  display: none; text-align: center; color: #5a5d7a;
+  font-size: 13px; margin-bottom: 1rem;
+}
+.auth-loading.show { display: block; }
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(108,99,255,0.2); border-top-color: #6c63ff;
+  border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">G</div>
+      <span class="auth-logo-text">GATE<em>tracker</em></span>
+    </div>
+
+    <!-- ── LOGIN FORM ── -->
+    <div id="authLoginForm">
+      <h2 class="auth-title">Welcome back</h2>
+      <p class="auth-sub">Sign in to your GATE preparation tracker</p>
+
+      <div class="auth-error" id="loginError"></div>
+      <div class="auth-loading" id="loginLoading"><span class="spinner"></span>Signing in...</div>
+
+      <!-- Google -->
+      <button class="btn-google" id="loginGoogleBtn" onclick="handleGoogleSignIn()">
+        <svg width="18" height="18" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="auth-divider">or</div>
+
+      <form class="auth-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="loginEmail" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="loginPassword" placeholder="••••••••" required/>
+        </div>
+        <button type="submit" class="btn-auth" id="loginBtn">Sign In</button>
+      </form>
+
+      <div class="auth-toggle">
+        Don't have an account? <button onclick="showSignup()">Sign up</button>
+      </div>
+    </div>
+
+    <!-- ── SIGNUP FORM ── -->
+    <div id="authSignupForm" style="display:none">
+      <h2 class="auth-title">Create account</h2>
+      <p class="auth-sub">Start your GATE preparation journey</p>
+
+      <div class="auth-error" id="signupError"></div>
+      <div class="auth-loading" id="signupLoading"><span class="spinner"></span>Creating account...</div>
+
+      <!-- Google -->
+      <button class="btn-google" id="signupGoogleBtn" onclick="handleGoogleSignIn()">
+        <svg width="18" height="18" viewBox="0 0 48 48">
+          <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+          <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+          <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+          <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.35-8.16 2.35-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+        </svg>
+        Sign up with Google
+      </button>
+
+      <div class="auth-divider">or</div>
+
+      <form class="auth-form" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" id="signupName" placeholder="Your name" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" id="signupEmail" placeholder="your@email.com" required/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-input" id="signupPassword" placeholder="Min. 6 characters" required minlength="6"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirm password</label>
+          <input type="password" class="form-input" id="signupConfirm" placeholder="••••••••" required/>
+        </div>
+        <button type="submit" class="btn-auth" id="signupBtn">Create Account</button>
+      </form>
+
+      <div class="auth-toggle">
+        Already have an account? <button onclick="showLogin()">Sign in</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }                          from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword,
+         signInWithEmailAndPassword, signInWithPopup,
+         GoogleAuthProvider, updateProfile,
+         onAuthStateChanged }                     from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+import { getDatabase, ref, set, get }             from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+// ── Firebase config ──────────────────────────────────────────
+const firebaseConfig = {
+  apiKey:            "AIzaSyBJp8hsmhOztAB-Fn1nYBq0PP0oeaePV-4",
+  authDomain:        "gate-cs-tracker-bd113.firebaseapp.com",
+  databaseURL:       "https://gate-cs-tracker-bd113-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId:         "gate-cs-tracker-bd113",
+  storageBucket:     "gate-cs-tracker-bd113.firebasestorage.app",
+  messagingSenderId: "562293146283",
+  appId:             "1:562293146283:web:a984708c26df8342faadee",
+};
+
+const app      = initializeApp(firebaseConfig);
+const auth     = getAuth(app);
+const db       = getDatabase(app);
+const provider = new GoogleAuthProvider();
+
+// ── If already logged in, redirect ──────────────────────────
+onAuthStateChanged(auth, (user) => {
+  if (user) window.location.href = "index.html";
+});
+
+// ── Helper: create user profile in DB if not exists ─────────
+async function ensureUserProfile(user, displayName) {
+  const userRef = ref(db, "users/" + user.uid);
+  const snap    = await get(userRef);
+  if (!snap.exists()) {
+    await set(userRef, {
+      userId:       displayName || user.displayName || user.email.split("@")[0],
+      email:        user.email,
+      examDate:     "2026-02-01",
+      dailyTarget:  6,
+      checked:      {},
+      logs:         [],
+      goals:        [],
+    });
+  }
+}
+
+// ── Helpers: show/hide error & loading ──────────────────────
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = friendlyError(msg);
+  el.classList.add("show");
+}
+function hideError(id)   { document.getElementById(id)?.classList.remove("show"); }
+function showLoad(id)    { document.getElementById(id)?.classList.add("show"); }
+function hideLoad(id)    { document.getElementById(id)?.classList.remove("show"); }
+function setDisabled(ids, v) { ids.forEach(id => { const el = document.getElementById(id); if(el) el.disabled = v; }); }
+
+function friendlyError(msg) {
+  if (msg.includes("user-not-found") || msg.includes("invalid-credential")) return "Invalid email or password.";
+  if (msg.includes("wrong-password"))      return "Incorrect password.";
+  if (msg.includes("email-already-in-use")) return "Email already registered. Please sign in.";
+  if (msg.includes("weak-password"))       return "Password must be at least 6 characters.";
+  if (msg.includes("popup-closed-by-user")) return "Google sign-in was cancelled.";
+  if (msg.includes("network-request-failed")) return "Network error. Check your connection.";
+  return msg;
+}
+
+// ── Toggle forms ─────────────────────────────────────────────
+window.showLogin = () => {
+  document.getElementById("authLoginForm").style.display  = "block";
+  document.getElementById("authSignupForm").style.display = "none";
+  hideError("loginError"); hideError("signupError");
+};
+window.showSignup = () => {
+  document.getElementById("authLoginForm").style.display  = "none";
+  document.getElementById("authSignupForm").style.display = "block";
+  hideError("loginError"); hideError("signupError");
+};
+
+// ── Google Sign-in (works for both login & signup) ───────────
+window.handleGoogleSignIn = async () => {
+  const isSignup = document.getElementById("authSignupForm").style.display !== "none";
+  const errId    = isSignup ? "signupError"  : "loginError";
+  const loadId   = isSignup ? "signupLoading": "loginLoading";
+  const btns     = ["loginGoogleBtn","signupGoogleBtn","loginBtn","signupBtn"];
+
+  hideError(errId);
+  showLoad(loadId);
+  setDisabled(btns, true);
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    await ensureUserProfile(result.user);
+    window.location.href = "index.html";
+  } catch (err) {
+    showError(errId, err.message);
+  } finally {
+    hideLoad(loadId);
+    setDisabled(btns, false);
+  }
+};
+
+// ── Email/Password Login ─────────────────────────────────────
+window.handleLogin = async (e) => {
+  e.preventDefault();
+  const email = document.getElementById("loginEmail").value.trim();
+  const pass  = document.getElementById("loginPassword").value;
+  const btns  = ["loginGoogleBtn","loginBtn"];
+
+  hideError("loginError");
+  showLoad("loginLoading");
+  setDisabled(btns, true);
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    window.location.href = "index.html";
+  } catch (err) {
+    showError("loginError", err.message);
+  } finally {
+    hideLoad("loginLoading");
+    setDisabled(btns, false);
+  }
+};
+
+// ── Email/Password Signup ────────────────────────────────────
+window.handleSignup = async (e) => {
+  e.preventDefault();
+  const name    = document.getElementById("signupName").value.trim();
+  const email   = document.getElementById("signupEmail").value.trim();
+  const pass    = document.getElementById("signupPassword").value;
+  const confirm = document.getElementById("signupConfirm").value;
+  const btns    = ["signupGoogleBtn","signupBtn"];
+
+  hideError("signupError");
+
+  if (pass !== confirm) { showError("signupError", "Passwords don't match"); return; }
+
+  showLoad("signupLoading");
+  setDisabled(btns, true);
+
+  try {
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    // Save display name
+    await updateProfile(cred.user, { displayName: name });
+    await ensureUserProfile(cred.user, name);
+    window.location.href = "index.html";
+  } catch (err) {
+    showError("signupError", err.message);
+  } finally {
+    hideLoad("signupLoading");
+    setDisabled(btns, false);
+  }
+};
+</script>
+</body>
+</html>
