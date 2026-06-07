@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GATE CS Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app">
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">G</span>
+        <span class="logo-text">GATE<em>tracker</em></span>
+      </div>
+      <div class="sidebar-user">
+        <div class="user-avatar" id="userAvatar">D</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">devil</div>
+          <div class="user-sub">GATE CS 2026</div>
+        </div>
+      </div>
+      <nav class="nav-links">
+        <a class="nav-item active" data-tab="dashboard" onclick="setTab('dashboard')">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          Dashboard
+        </a>
+        <a class="nav-item" data-tab="subjects" onclick="setTab('subjects')">
+          <svg viewBox="0 0 24 24">
+            <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+          </svg>
+          Subjects
+        </a>
+        <a class="nav-item" data-tab="log" onclick="setTab('log')">
+          <svg viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" />
+            <line x1="16" y1="2" x2="16" y2="6" />
+            <line x1="8" y1="2" x2="8" y2="6" />
+            <line x1="3" y1="10" x2="21" y2="10" />
+          </svg>
+          Study Log
+        </a>
+        <a class="nav-item" data-tab="analytics" onclick="setTab('analytics')">
+          <svg viewBox="0 0 24 24">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          Analytics
+        </a>
+        <!-- <a class="nav-item" data-tab="goals" onclick="setTab('goals')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        Goals
+      </a> -->
+        <a class="nav-item" href="goals.html">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <circle cx="12" cy="12" r="6" />
+            <circle cx="12" cy="12" r="2" />
+          </svg>
+          Goals
+        </a>
+        <a class="nav-item" data-tab="settings" onclick="setTab('settings')">
+          <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+          </svg>
+          Settings
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="exam-countdown" id="examCountdown">
+          <div class="countdown-label">GATE 2027</div>
+          <div class="countdown-days" id="countdownDays">--</div>
+          <div class="countdown-sub">days remaining</div>
+        </div>
+        <button onclick="logout()" class="btn-logout"
+          style="width:100%;margin-top:1rem;padding:8px 12px;background:#f87171;color:#fff;border:none;border-radius:8px;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:500;transition:opacity 0.15s">Logout</button>
+      </div>
+    </nav>
+
+    <!-- Mobile top bar -->
+    <div class="topbar">
+      <button class="menu-btn" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24">
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <line x1="3" y1="12" x2="21" y2="12" />
+          <line x1="3" y1="18" x2="21" y2="18" />
+        </svg>
+      </button>
+      <span class="topbar-title">GATE<em>tracker</em></span>
+      <div class="topbar-avatar" id="topbarAvatar">D</div>
+    </div>
+
+    <!-- Main content -->
+    <main class="main" id="main">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <h1 id="greetingText">Good morning 👋</h1>
+          <p class="page-sub" id="greetingUser">Let's get some study done today</p>
+        </div>
+        <div class="stats-row" id="statsRow"></div>
+        <div class="dash-grid">
+          <div class="dash-card">
+            <div class="card-title">Overall progress</div>
+            <div class="big-ring-wrap">
+              <svg class="big-ring" viewBox="0 0 120 120">
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--border)" stroke-width="8" />
+                <circle cx="60" cy="60" r="50" fill="none" stroke="var(--accent)" stroke-width="8"
+                  stroke-dasharray="314" stroke-dashoffset="314" stroke-linecap="round" id="bigRingCircle"
+                  style="transition:stroke-dashoffset 1s ease;transform:rotate(-90deg);transform-origin:center" />
+              </svg>
+              <div class="ring-label">
+                <div class="ring-pct" id="ringPct">0%</div>
+                <div class="ring-sub">complete</div>
+              </div>
+            </div>
+          </div>
+          <div class="dash-card">
+            <div class="card-title">Subject completion</div>
+            <div class="subject-bars" id="subjectBars"></div>
+          </div>
+          <div class="dash-card wide">
+            <div class="card-title">Recent activity</div>
+            <div id="recentActivity"></div>
+          </div>
+          <div class="dash-card">
+            <div class="card-title">Weekly hours</div>
+            <div class="week-chart" id="weekChart"></div>
+          </div>
+          <div class="dash-card">
+            <div class="card-title">Today's quick log</div>
+            <div class="quick-log">
+              <select id="qlSubject" class="input"></select>
+              <input type="number" id="qlHrs" class="input" placeholder="Hours" min="0.5" max="12" step="0.5"
+                value="1" />
+              <input type="text" id="qlNote" class="input" placeholder="What did you study?" />
+              <button class="btn-primary" onclick="quickLog()">Log session</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBJECTS -->
+      <div class="page" id="page-subjects">
+        <div class="page-header">
+          <h1>Subjects</h1>
+          <p class="page-sub">Track topic-by-topic progress</p>
+        </div>
+        <div class="filter-row">
+          <button class="filter-btn active" onclick="filterSubjects('all',this)">All</button>
+          <button class="filter-btn" onclick="filterSubjects('pending',this)">Pending</button>
+          <button class="filter-btn" onclick="filterSubjects('inprogress',this)">In Progress</button>
+          <button class="filter-btn" onclick="filterSubjects('done',this)">Completed</button>
+        </div>
+        <div id="subjectsGrid"></div>
+      </div>
+
+      <!-- STUDY LOG -->
+      <div class="page" id="page-log">
+        <div class="page-header">
+          <div>
+            <h1>Study Log</h1>
+            <p class="page-sub">All your study sessions</p>
+          </div>
+          <button class="btn-primary" onclick="openLogModal()">+ Add session</button>
+        </div>
+        <div class="log-stats-row" id="logStatsRow"></div>
+        <div class="log-filters">
+          <input type="text" class="input search-input" id="logSearch" placeholder="Search logs..."
+            oninput="renderLog()" />
+          <select class="input" id="logFilterSubject" onchange="renderLog()">
+            <option value="">All subjects</option>
+          </select>
+          <input type="month" class="input" id="logFilterMonth" onchange="renderLog()" />
+        </div>
+        <div id="logList"></div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="page" id="page-analytics">
+        <div class="page-header"
+          style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <h1>📊 Analytics</h1>
+            <p class="page-sub">Deep dive into your study patterns</p>
+          </div>
+          <div class="period-tabs" id="periodTabs">
+            <button class="period-btn active" onclick="setPeriod('week',this)">This Week</button>
+            <button class="period-btn" onclick="setPeriod('month',this)">This Month</button>
+            <button class="period-btn" onclick="setPeriod('3month',this)">3 Months</button>
+            <button class="period-btn" onclick="setPeriod('all',this)">All Time</button>
+          </div>
+        </div>
+        <div id="analyticsContent">
+          <div class="loading">
+            <div class="spinner"></div> Loading analytics...
+          </div>
+        </div>
+      </div>
+
+      <!-- GOALS -->
+      <div class="page" id="page-goals">
+        <div class="page-header">
+          <div>
+            <h1>Goals</h1>
+            <p class="page-sub">Set targets, track milestones</p>
+          </div>
+          <button class="btn-primary" onclick="openGoalModal()">+ Add goal</button>
+        </div>
+        <div id="goalsList"></div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <h1>Settings</h1>
+          <p class="page-sub">Customize your tracker</p>
+        </div>
+        <div class="settings-card">
+          <div class="settings-section">
+            <div class="settings-title">Profile</div>
+            <div class="form-row">
+              <label>Your name / ID</label>
+              <input type="text" class="input" id="settingUserId" placeholder="e.g. devil" />
+            </div>
+            <div class="form-row">
+              <label>GATE exam date</label>
+              <input type="date" class="input" id="settingExamDate" />
+            </div>
+            <div class="form-row">
+              <label>Daily study target (hours)</label>
+              <input type="number" class="input" id="settingDailyTarget" min="1" max="16" step="0.5" value="6" />
+            </div>
+            <button class="btn-primary" onclick="saveSettings()">Save settings</button>
+          </div>
+          <div class="settings-section danger-zone">
+            <div class="settings-title">Data</div>
+            <button class="btn-danger" onclick="exportData()">Export JSON</button>
+            <button class="btn-danger" onclick="confirmReset()">Reset all data</button>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Log Modal -->
+  <div class="modal-overlay" id="logModal" onclick="closeModal('logModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title" id="logModalTitle">Add study session</div>
+        <button class="modal-close" onclick="closeModal('logModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <label>Date</label>
+          <input type="date" class="input" id="modalDate" />
+        </div>
+        <div class="form-row">
+          <label>Subject</label>
+          <select class="input" id="modalSubject"></select>
+        </div>
+        <div class="form-row">
+          <label>Hours studied</label>
+          <input type="number" class="input" id="modalHrs" min="0.5" max="16" step="0.5" value="2" />
+        </div>
+        <div class="form-row">
+          <label>Notes</label>
+          <textarea class="input" id="modalNote" rows="3" placeholder="What did you cover?"></textarea>
+        </div>
+        <div class="form-row">
+          <label>Mood</label>
+          <div class="mood-row">
+            <button class="mood-btn" data-mood="😴" onclick="setMood(this)">😴</button>
+            <button class="mood-btn" data-mood="😐" onclick="setMood(this)">😐</button>
+            <button class="mood-btn active" data-mood="🙂" onclick="setMood(this)">🙂</button>
+            <button class="mood-btn" data-mood="😊" onclick="setMood(this)">😊</button>
+            <button class="mood-btn" data-mood="🔥" onclick="setMood(this)">🔥</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('logModal')">Cancel</button>
+        <button class="btn-primary" id="logModalBtn" onclick="saveLogEntry()">Add session</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Goal Modal -->
+  <div class="modal-overlay" id="goalModal" onclick="closeModal('goalModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Add goal</div>
+        <button class="modal-close" onclick="closeModal('goalModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <label>Goal title</label>
+          <input type="text" class="input" id="goalTitle" placeholder="e.g. Complete OS chapter" />
+        </div>
+        <div class="form-row">
+          <label>Target date</label>
+          <input type="date" class="input" id="goalDate" />
+        </div>
+        <div class="form-row">
+          <label>Subject (optional)</label>
+          <select class="input" id="goalSubject">
+            <option value="">General</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('goalModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveGoal()">Add goal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+
+</html>

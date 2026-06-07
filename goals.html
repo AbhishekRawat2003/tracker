@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Goals & Productivity – GATE Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 5l-7 7 7 7" />
+        </svg>
+        Dashboard
+      </a>
+      <div class="header-title">GATE<em>tracker</em> · Productivity</div>
+    </div>
+    <button class="btn-primary" id="addBtn" onclick="handleAddBtn()">+ Add</button>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <button class="tab-btn active" data-tab="goals" onclick="switchTab('goals',this)">
+      🎯 Goals <span class="badge" id="badge-goals">0</span>
+    </button>
+    <button class="tab-btn" data-tab="todos" onclick="switchTab('todos',this)">
+      ✅ To-Dos <span class="badge" id="badge-todos">0</span>
+    </button>
+    <button class="tab-btn" data-tab="practice" onclick="switchTab('practice',this)">
+      📊 Daily Practice <span class="badge" id="badge-practice">0</span>
+    </button>
+    <button class="tab-btn" data-tab="milestones" onclick="switchTab('milestones',this)">
+      🏁 Milestones <span class="badge" id="badge-milestones">0</span>
+    </button>
+    <button class="tab-btn" data-tab="habits" onclick="switchTab('habits',this)">
+      🔁 Habits <span class="badge" id="badge-habits">0</span>
+    </button>
+    <button class="tab-btn" data-tab="pomodoro" onclick="switchTab('pomodoro',this)">
+      🍅 Pomodoro
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- ── GOALS ── -->
+    <div class="tab-panel active" id="panel-goals">
+      <div class="stats-bar" id="goalStats"></div>
+      <div class="section-header">
+        <div>
+          <div class="section-title">Your Goals</div>
+          <div class="section-sub">Set targets, track completion</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <input class="input" id="goalSearch" placeholder="Search goals…" style="width:180px"
+            oninput="renderGoals()" />
+          <div class="goals-filters">
+            <button class="filter-chip active" onclick="setGoalFilter('all',this)">All</button>
+            <button class="filter-chip" onclick="setGoalFilter('active',this)">Active</button>
+            <button class="filter-chip" onclick="setGoalFilter('done',this)">Done</button>
+            <button class="filter-chip" onclick="setGoalFilter('overdue',this)">Overdue</button>
+          </div>
+        </div>
+      </div>
+      <div class="goals-list" id="goalsList"></div>
+    </div>
+
+    <!-- ── TODOS ── -->
+    <div class="tab-panel" id="panel-todos">
+      <div class="stats-bar" id="todoStats"></div>
+      <div class="todo-add-row">
+        <input class="input" id="quickTodoInput" placeholder="Add a new to-do and press Enter…"
+          onkeydown="if(event.key==='Enter')quickAddTodo()" />
+        <select class="input" id="quickTodoPriority" style="width:120px">
+          <option value="mid">Medium</option>
+          <option value="high">High</option>
+          <option value="low">Low</option>
+        </select>
+        <select class="input" id="quickTodoSubject" style="width:180px">
+          <option value="">No subject</option>
+        </select>
+        <button class="btn-primary" onclick="quickAddTodo()">Add</button>
+      </div>
+      <div class="todo-toolbar">
+        <input class="input" id="todoSearch" placeholder="Search…" style="max-width:200px" oninput="renderTodos()" />
+        <select class="input" id="todoFilterPriority" style="max-width:140px" onchange="renderTodos()">
+          <option value="">All priorities</option>
+          <option value="high">High</option>
+          <option value="mid">Medium</option>
+          <option value="low">Low</option>
+        </select>
+        <select class="input" id="todoFilterSubject" style="max-width:180px" onchange="renderTodos()">
+          <option value="">All subjects</option>
+        </select>
+      </div>
+      <div class="todo-sections" id="todoContainer"></div>
+    </div>
+
+    <!-- ── DAILY PRACTICE ── -->
+    <div class="tab-panel" id="panel-practice">
+      <div class="stats-bar" id="practiceStats"></div>
+      <div class="dpt-section">
+        <div class="dpt-header">
+          <div class="dpt-title">Today's Practice Counters</div>
+          <button class="btn-primary" onclick="openTrackerModal()">+ Add Tracker</button>
+        </div>
+        <div class="dpt-grid" id="practiceGrid"></div>
+      </div>
+    </div>
+
+    <!-- ── MILESTONES ── -->
+    <div class="tab-panel" id="panel-milestones">
+      <div class="stats-bar" id="msStats"></div>
+      <div class="section-header">
+        <div>
+          <div class="section-title">Milestones</div>
+          <div class="section-sub">Key checkpoints in your GATE journey</div>
+        </div>
+      </div>
+      <div class="milestone-timeline" id="milestoneList"></div>
+    </div>
+
+    <!-- ── HABITS ── -->
+    <div class="tab-panel" id="panel-habits">
+      <div class="stats-bar" id="habitStats"></div>
+      <div class="section-header">
+        <div>
+          <div class="section-title">Daily Habits</div>
+          <div class="section-sub">Build consistency with daily tracking</div>
+        </div>
+      </div>
+      <div class="habits-grid" id="habitsList"></div>
+    </div>
+
+    <!-- ── POMODORO ── -->
+    <div class="tab-panel" id="panel-pomodoro">
+      <div class="stats-bar" id="pomoStats"></div>
+      <div class="pomodoro-wrap">
+        <div class="pomo-timer-card">
+          <div class="pomo-mode-btns">
+            <button class="pomo-mode-btn active" onclick="setPomoMode('work',this)">Focus</button>
+            <button class="pomo-mode-btn" onclick="setPomoMode('short',this)">Short Break</button>
+            <button class="pomo-mode-btn" onclick="setPomoMode('long',this)">Long Break</button>
+          </div>
+          <div class="pomo-ring-wrap">
+            <svg class="pomo-ring" viewBox="0 0 180 180">
+              <circle cx="90" cy="90" r="80" fill="none" stroke="var(--surface3)" stroke-width="8" />
+              <circle id="pomoRingCircle" cx="90" cy="90" r="80" fill="none" stroke="var(--accent)" stroke-width="8"
+                stroke-linecap="round" stroke-dasharray="502.7" stroke-dashoffset="0"
+                style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset 1s linear, stroke 0.3s" />
+            </svg>
+            <div class="pomo-time-display" id="pomoDisplay">25:00</div>
+            <div class="pomo-session-label" id="pomoSessionLabel">Focus session</div>
+          </div>
+          <div class="pomo-controls">
+            <button class="pomo-btn pomo-btn-start" id="pomoBtnStart" onclick="togglePomodoro()">Start</button>
+            <button class="pomo-btn pomo-btn-reset" onclick="resetPomodoro()">Reset</button>
+          </div>
+          <div class="pomo-session-count" id="pomoCount">Session 1 of 4</div>
+          <div class="pomo-dots" id="pomoDots"></div>
+        </div>
+        <div>
+          <div class="pomo-history-card">
+            <div class="pomo-history-title">Today's Sessions</div>
+            <div class="pomo-history-list" id="pomoHistory">
+              <div style="color:var(--text2);font-size:13px;text-align:center;padding:20px">No sessions yet today</div>
+            </div>
+          </div>
+          <div class="pomo-history-card" style="margin-top:16px">
+            <div class="pomo-history-title">Settings</div>
+            <div class="pomo-settings">
+              <div class="pomo-settings-title">Durations (minutes)</div>
+              <div class="pomo-settings-row">
+                <span class="pomo-settings-label">Focus</span>
+                <input class="pomo-settings-input" type="number" id="pomoWorkMin" value="25" min="1" max="60"
+                  onchange="updatePomoSettings()" />
+              </div>
+              <div class="pomo-settings-row">
+                <span class="pomo-settings-label">Short break</span>
+                <input class="pomo-settings-input" type="number" id="pomoShortMin" value="5" min="1" max="30"
+                  onchange="updatePomoSettings()" />
+              </div>
+              <div class="pomo-settings-row">
+                <span class="pomo-settings-label">Long break</span>
+                <input class="pomo-settings-input" type="number" id="pomoLongMin" value="15" min="1" max="60"
+                  onchange="updatePomoSettings()" />
+              </div>
+              <div class="pomo-settings-row">
+                <span class="pomo-settings-label">Sessions/cycle</span>
+                <input class="pomo-settings-input" type="number" id="pomoSessionsPerCycle" value="4" min="2" max="8"
+                  onchange="updatePomoSettings()" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- GOAL MODAL -->
+  <div class="modal-overlay" id="goalModal" onclick="closeModal('goalModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title" id="goalModalTitle">Add Goal</div>
+        <button class="modal-close" onclick="closeModal('goalModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row"><label>Title *</label><input class="input" id="gTitle"
+            placeholder="e.g. Complete all OS topics" /></div>
+        <div class="form-row"><label>Description</label><textarea class="input" id="gDesc" rows="2"
+            placeholder="Optional details…"></textarea></div>
+        <div class="form-row"><label>Subject</label><select class="input" id="gSubject">
+            <option value="">General</option>
+          </select></div>
+        <div class="form-row"><label>Priority</label>
+          <select class="input" id="gPriority">
+            <option value="high">🔴 High</option>
+            <option value="mid" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+        </div>
+        <div class="form-row"><label>Target date</label><input class="input" type="date" id="gDate" /></div>
+        <div class="form-row"><label>Progress % (0–100)</label><input class="input" type="number" id="gProgress" min="0"
+            max="100" value="0" /></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('goalModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveGoal()">Save Goal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODO MODAL -->
+  <div class="modal-overlay" id="todoModal" onclick="closeModal('todoModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title" id="todoModalTitle">Edit To-Do</div>
+        <button class="modal-close" onclick="closeModal('todoModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row"><label>Task *</label><input class="input" id="tText"
+            placeholder="What needs to be done?" /></div>
+        <div class="form-row"><label>Subject</label><select class="input" id="tSubject">
+            <option value="">No subject</option>
+          </select></div>
+        <div class="form-row"><label>Priority</label>
+          <select class="input" id="tPriority">
+            <option value="high">🔴 High</option>
+            <option value="mid" selected>🟡 Medium</option>
+            <option value="low">🟢 Low</option>
+          </select>
+        </div>
+        <div class="form-row"><label>Due date</label><input class="input" type="date" id="tDue" /></div>
+        <div class="form-row"><label>Notes</label><textarea class="input" id="tNote" rows="2"
+            placeholder="Optional…"></textarea></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('todoModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveTodo()">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MILESTONE MODAL -->
+  <div class="modal-overlay" id="msModal" onclick="closeModal('msModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Add Milestone</div>
+        <button class="modal-close" onclick="closeModal('msModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row"><label>Milestone title *</label><input class="input" id="msTitle"
+            placeholder="e.g. Mock test score ≥ 50" /></div>
+        <div class="form-row"><label>Description</label><textarea class="input" id="msDesc" rows="2"
+            placeholder="What does completing this milestone mean?"></textarea></div>
+        <div class="form-row"><label>Emoji</label><input class="input" id="msEmoji" placeholder="🏆" maxlength="2"
+            style="width:80px" /></div>
+        <div class="form-row"><label>Target date *</label><input class="input" type="date" id="msDate" /></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('msModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveMilestone()">Add Milestone</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HABIT MODAL -->
+  <div class="modal-overlay" id="habitModal" onclick="closeModal('habitModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title">Add Habit</div>
+        <button class="modal-close" onclick="closeModal('habitModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row"><label>Habit name *</label><input class="input" id="hName"
+            placeholder="e.g. Solve 5 PYQs" /></div>
+        <div class="form-row"><label>Emoji / icon</label><input class="input" id="hEmoji" placeholder="📝" maxlength="2"
+            style="width:80px" /></div>
+        <div class="form-row"><label>Frequency</label>
+          <select class="input" id="hFreq">
+            <option value="daily">Daily</option>
+            <option value="weekdays">Weekdays only</option>
+            <option value="weekends">Weekends only</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('habitModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveHabit()">Add Habit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRACKER MODAL -->
+  <div class="modal-overlay" id="trackerModal" onclick="closeModal('trackerModal')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div class="modal-title" id="trackerModalTitle">Add Practice Tracker</div>
+        <button class="modal-close" onclick="closeModal('trackerModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row"><label>Tracker name *</label><input class="input" id="trName"
+            placeholder="e.g. DSA Problems, OOP Concepts…" /></div>
+        <div class="form-row"><label>Emoji icon</label><input class="input" id="trEmoji" placeholder="📝" maxlength="2"
+            style="width:80px" /></div>
+        <div class="form-row"><label>Daily goal (count)</label><input class="input" type="number" id="trGoal" min="1"
+            max="100" value="5" style="width:100px" /></div>
+        <div class="form-row"><label>Unit label</label><input class="input" id="trUnit"
+            placeholder="e.g. questions, problems, pages" value="questions" /></div>
+        <div class="form-row">
+          <label>Color</label>
+          <div class="color-picker-row" id="colorPicker">
+            <div class="color-opt selected" data-color="#6ee7b7" style="background:#6ee7b7" onclick="selectColor(this)">
+            </div>
+            <div class="color-opt" data-color="#60a5fa" style="background:#60a5fa" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#a78bfa" style="background:#a78bfa" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#fb923c" style="background:#fb923c" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#f87171" style="background:#f87171" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#fbbf24" style="background:#fbbf24" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#34d399" style="background:#34d399" onclick="selectColor(this)"></div>
+            <div class="color-opt" data-color="#e879f9" style="background:#e879f9" onclick="selectColor(this)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('trackerModal')">Cancel</button>
+        <button class="btn-primary" onclick="saveTracker()">Add Tracker</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script type="module" src="goals.js"></script>
+</body>
+
+</html>
